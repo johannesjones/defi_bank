@@ -42,8 +42,15 @@ class App extends Component {
                   dBank.networks[netId].address
               );
               const dBankAddress = dBank.networks[netId].address;
-              console.log(dBankAddress);
-              this.setState({ token, dbank, dBankAddress });
+              // console.log(dBankAddress);
+              const tokenBalance = await token.methods.balanceOf(this.state.account).call()
+              console.log(web3.utils.fromWei(tokenBalance));
+              this.setState({
+                  token,
+                  dbank,
+                  dBankAddress,
+                  tokenBalance: web3.utils.fromWei(tokenBalance),
+              });
           } catch (error) {
               console.log("Error", error);
               window.alert("Contracts not deployed to the current network!");
@@ -99,6 +106,7 @@ class App extends Component {
       token: null,
       dbank: null,
       balance: 0,
+      tokenBalance: 0,
       dBankAddress: null
     }
   }
@@ -149,7 +157,7 @@ class App extends Component {
                                                 e.preventDefault();
                                                 let amount =
                                                     this.depositAmount.value;
-                                                amount = amount * 10**18; //convert to wei
+                                                amount = amount * 10 ** 18; //convert to wei
                                                 this.deposit(amount);
                                             }}
                                         >
@@ -159,7 +167,7 @@ class App extends Component {
                                                     id="depositAmount"
                                                     step="0.01"
                                                     type="number"
-                                                    placeholder='amount..'
+                                                    placeholder="amount.."
                                                     ref={(input) => {
                                                         this.depositAmount =
                                                             input;
@@ -177,7 +185,7 @@ class App extends Component {
                                         </form>
                                     </div>
                                 </Tab>
-                                <Tab eventKey="wihdraw" title="Withdraw">             
+                                <Tab eventKey="withdraw" title="Withdraw">
                                     <br></br>
                                     Do you want to withdraw + take interest?
                                     <br></br>
@@ -191,6 +199,12 @@ class App extends Component {
                                             WITHDRAW
                                         </button>
                                     </div>
+                                </Tab>
+                                <Tab
+                                    eventKey="tokenBalance"
+                                    title="Token Balance accrued taken"
+                                >
+                                    {this.state.tokenBalance}
                                 </Tab>
                             </Tabs>
                         </div>
